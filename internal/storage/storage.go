@@ -44,6 +44,16 @@ func Save(r Record) error {
 
 	writer := csv.NewWriter(file)
 
+	stat, err := file.Stat()
+	if err != nil {
+		return err
+	}
+	if stat.Size() == 0 {
+		if err := writer.Write([]string{"Date", "Mood", "Energy", "Focus"}); err != nil {
+			return err
+		}
+	}
+
 	if err := writer.Write([]string{
 		r.Date,
 		strconv.Itoa(r.Mood),
@@ -53,10 +63,8 @@ func Save(r Record) error {
 		return err
 	}
 	writer.Flush()
-	if err := writer.Error(); err != nil {
-		return err
-	}
-	return nil
+
+	return writer.Error()
 
 }
 

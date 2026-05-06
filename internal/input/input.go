@@ -8,13 +8,17 @@ import (
 	"strings"
 )
 
-func AskInt(prompt string, min, max int) int {
+func AskInt(prompt string, min, max int) (int, error) {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
 		fmt.Print(prompt)
 
-		text, _ := reader.ReadString('\n')
+		text, err := reader.ReadString('\n')
+		if err != nil {
+			return 0, err
+		}
+
 		text = strings.TrimSpace(text)
 
 		num, err := strconv.Atoi(text)
@@ -23,6 +27,6 @@ func AskInt(prompt string, min, max int) int {
 			continue
 		}
 
-		return num
+		return num, nil
 	}
 }

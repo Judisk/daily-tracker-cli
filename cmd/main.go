@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 
 	"github.com/Judisk/daily-tracker-cli/internal/input"
 	"github.com/Judisk/daily-tracker-cli/internal/stats"
@@ -42,9 +41,21 @@ func main() {
 
 func runAddWithFlag(moodF, energyF, focusF *int) {
 
-	mood := getValue(moodF, "Mood (0-5): ")
-	energy := getValue(energyF, "Energy (0-5): ")
-	focus := getValue(focusF, "Focus (0-5): ")
+	mood, err := getValue(moodF, "Mood (0-5): ")
+	if err != nil {
+		fmt.Println("Error", err)
+		return
+	}
+	energy, err := getValue(energyF, "Energy (0-5): ")
+	if err != nil {
+		fmt.Println("Error", err)
+		return
+	}
+	focus, err := getValue(focusF, "Focus (0-5): ")
+	if err != nil {
+		fmt.Println("Error", err)
+		return
+	}
 
 	record, err := storage.NewRecord(mood, energy, focus)
 	if err != nil {
@@ -86,13 +97,13 @@ func runStats(last int) {
 	fmt.Printf("Average focus:  %.2f\n", avgFocus)
 }
 
-func getValue(flagVal *int, prompt string) int {
+func getValue(flagVal *int, prompt string) (int, error) {
 	if *flagVal != -1 {
 		if *flagVal < storage.MinValue || *flagVal > storage.MaxValue {
 			fmt.Println("Invalid value, must be between", storage.MinValue, storage.MaxValue)
-			os.Exit(1)
+			return 0, fmt.Errorf("value must be between %d and %d", storage.MinValue, storage.MaxValue)
 		}
-		return *flagVal
+		return *flagVal, nil
 	}
 	return input.AskInt(prompt, storage.MinValue, storage.MaxValue)
 }
