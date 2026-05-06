@@ -46,7 +46,10 @@ func Load() []Record {
 	defer file.Close()
 
 	reader := csv.NewReader(file)
-	rows, _ := reader.ReadAll()
+	rows, err := reader.ReadAll()
+	if err != nil {
+		panic(err)
+	}
 
 	var records []Record
 
