@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 
 	"github.com/Judisk/daily-tracker-cli/internal/input"
 	"github.com/Judisk/daily-tracker-cli/internal/stats"
@@ -55,22 +54,27 @@ func runAddWithFlag(moodF, energyF, focusF *int) {
 	var mood, energy, focus int
 
 	if *moodF != -1 {
-		mood = validatate(*moodF, 0, 5, "Mood")
+		mood = *moodF
 	} else {
 		mood = input.AskInt("Mood (0-5): ", 0, 5)
 	}
 	if *energyF != -1 {
-		energy = validatate(*energyF, 0, 5, "Mood")
+		energy = *energyF
 	} else {
 		energy = input.AskInt("Energy (0-5): ", 0, 5)
 	}
 
 	if *focusF != -1 {
-		focus = validatate(*focusF, 0, 5, "Mood")
+		focus = *focusF
 	} else {
 		focus = input.AskInt("Focus (0-5): ", 0, 5)
 	}
-	record := storage.NewRecord(mood, energy, focus)
+	record, err := storage.NewRecord(mood, energy, focus)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
 	storage.Save(record)
 	fmt.Println("Saved ✅")
 }
@@ -91,13 +95,4 @@ func runStats(last int) {
 
 	fmt.Println("Records used:", len(records))
 	fmt.Println("Average mood:", stats.AvgMood(records))
-}
-
-func validatate(val, min, max int, name string) int {
-	if val < min || val > max {
-		fmt.Printf("%s must bettween %d and %d\n", name, min, max)
-		fmt.Println("Invalid input")
-		os.Exit(1)
-	}
-	return val
 }

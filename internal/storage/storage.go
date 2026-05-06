@@ -2,9 +2,15 @@ package storage
 
 import (
 	"encoding/csv"
+	"fmt"
 	"os"
 	"strconv"
 	"time"
+)
+
+const (
+	MinValue = 0
+	MaxValue = 5
 )
 
 type Record struct {
@@ -14,13 +20,17 @@ type Record struct {
 	Focus  int
 }
 
-func NewRecord(mood, energy, focus int) Record {
+func NewRecord(mood, energy, focus int) (Record, error) {
+	if err := validateRecord(mood, energy, focus); err != nil {
+		return Record{}, err
+	}
+
 	return Record{
 		Date:   time.Now().Format("2006-01-02"),
 		Mood:   mood,
 		Energy: energy,
 		Focus:  focus,
-	}
+	}, nil
 }
 
 func Save(r Record) {
@@ -48,15 +58,26 @@ func Load() []Record {
 	reader := csv.NewReader(file)
 	rows, err := reader.ReadAll()
 	if err != nil {
-		panic(err)
+		return nil
 	}
 
 	var records []Record
 
 	for _, row := range rows {
-		mood, _ := strconv.Atoi(row[1])
-		energy, _ := strconv.Atoi(row[2])
-		focus, _ := strconv.Atoi(row[3])
+		if len(row) < 4 {
+			continue
+		}
+		mood, err1 := strconv.Atoi(row[1])
+		energy, err2 := strconv.Atoi(row[2])
+		focus, err3 := strconv.Atoi(row[3])
+
+		if err1 != nil || err2 != nil || err3 != nil {
+			continue
+		}
+
+		if err := validateRecord(mood, energy, focus); err != nil {
+			continue
+		}
 
 		records = append(records, Record{
 			Date:   row[0],
@@ -67,4 +88,17 @@ func Load() []Record {
 	}
 
 	return records
+}
+
+func validateRecord(mood, energy, focus int) error {
+	if mood < MinValue || mood > MaxValue {
+		return fmt.Errorf("mood must be %d-%d", MinValue, MaxValue)
+	}
+	if energy < MinValue || energy > MaxValue {
+		return fmt.Errorf("energy must be %d-%d", MinValue, MaxValue)
+	}
+	if focus < MinValue || focus > MaxValue {
+		return fmt.Errorf("focus must be %d-%d", MinValue, MaxValue)
+	}
+	return nil
 }
