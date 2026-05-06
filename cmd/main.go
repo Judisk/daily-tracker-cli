@@ -57,7 +57,7 @@ func runAddWithFlag(moodF, energyF, focusF, pillsF *int) {
 		fmt.Println("Error", err)
 		return
 	}
-	pills, err := getValue(pillsF, "Pills (0-50):", storage.PillsMin, storage.PillsMax)
+	pills, err := getValue(pillsF, "Pills (0-50): ", storage.PillsMin, storage.PillsMax)
 	if err != nil {
 		fmt.Println("Error", err)
 		return
@@ -72,7 +72,10 @@ func runAddWithFlag(moodF, energyF, focusF, pillsF *int) {
 		return
 	}
 
-	storage.Save(record)
+	if err := storage.Save(record); err != nil {
+		fmt.Println("Error saving data:", err)
+		return
+	}
 	fmt.Println("Saved ✅")
 }
 
