@@ -82,7 +82,7 @@ func runAddWithFlag(moodF, energyF, focusF *int) {
 func runStats(last int) {
 	records, err := storage.Load()
 	if err != nil {
-		fmt.Println("Failed to load data:", err)
+		fmt.Printf("failed to load data: %v\n", err)
 		return
 	}
 
