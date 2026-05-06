@@ -42,25 +42,28 @@ func main() {
 
 func runAddWithFlag(moodF, energyF, focusF, pillsF *int) {
 
-	mood, err := getValue(moodF, "Mood (0-5): ")
+	mood, err := getValue(moodF, "Mood (0-5): ", storage.MinValue, storage.MaxValue)
 	if err != nil {
 		fmt.Println("Error", err)
 		return
 	}
-	energy, err := getValue(energyF, "Energy (0-5): ")
+	energy, err := getValue(energyF, "Energy (0-5): ", storage.MinValue, storage.MaxValue)
 	if err != nil {
 		fmt.Println("Error", err)
 		return
 	}
-	focus, err := getValue(focusF, "Focus (0-5): ")
+	focus, err := getValue(focusF, "Focus (0-5): ", storage.MinValue, storage.MaxValue)
 	if err != nil {
 		fmt.Println("Error", err)
 		return
 	}
-	pills, err := getValuePills(pillsF, "Pills (0-50):")
+	pills, err := getValue(pillsF, "Pills (0-50):", storage.PillsMin, storage.PillsMax)
 	if err != nil {
 		fmt.Println("Error", err)
 		return
+	}
+	if pills <= storage.PillsLowThreshold {
+		fmt.Printf("Warning pills running low (%d left)\n", pills)
 	}
 
 	record, err := storage.NewRecord(mood, energy, focus, pills)
@@ -103,28 +106,13 @@ func runStats(last int) {
 	fmt.Printf("Average focus:  %.2f\n", avgFocus)
 }
 
-func getValue(flagVal *int, prompt string) (int, error) {
+func getValue(flagVal *int, prompt string, min, max int) (int, error) {
 	if *flagVal != -1 {
-		if *flagVal < storage.MinValue || *flagVal > storage.MaxValue {
-			fmt.Println("Invalid value, must be between", storage.MinValue, storage.MaxValue)
-			return 0, fmt.Errorf("value must be between %d and %d", storage.MinValue, storage.MaxValue)
+		if *flagVal < min || *flagVal > max {
+			fmt.Println("Invalid value, must be between", min, max)
+			return 0, fmt.Errorf("value must be between %d and %d", min, max)
 		}
 		return *flagVal, nil
 	}
-	return input.AskInt(prompt, storage.MinValue, storage.MaxValue)
-}
-
-func getValuePills(flagVal *int, prompt string) (int, error) {
-	if *flagVal != -1 {
-		if *flagVal < storage.PillsMin || *flagVal > storage.PillsMax {
-			fmt.Println("Invalid value, must be between", storage.PillsMin, storage.PillsMax)
-			return 0, fmt.Errorf("value must be between %d and %d", storage.PillsMin, storage.PillsMax)
-		}
-		return *flagVal, nil
-	}
-	input, err := input.AskInt(prompt, storage.PillsMin, storage.PillsMax)
-	if input <= storage.PillsLowThreshold {
-		fmt.Printf("Warning pills running low (%d left)\n", input)
-	}
-	return input, err
+	return input.AskInt(prompt, min, max)
 }
