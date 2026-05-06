@@ -12,21 +12,28 @@ const (
 	MinValue = 0
 	MaxValue = 5
 )
+const (
+	PillsMin          = 0
+	PillsMax          = 50
+	PillsLowThreshold = 7
+)
 
 type Record struct {
 	Date   string
 	Mood   int
 	Energy int
 	Focus  int
+	Pills  int
 }
 
-func NewRecord(mood, energy, focus int) (Record, error) {
+func NewRecord(mood, energy, focus, pills int) (Record, error) {
 
 	r := Record{
 		Date:   time.Now().Format("2006-01-02"),
 		Mood:   mood,
 		Energy: energy,
 		Focus:  focus,
+		Pills:  pills,
 	}
 
 	if err := r.Validate(); err != nil {
@@ -49,7 +56,7 @@ func Save(r Record) error {
 		return err
 	}
 	if stat.Size() == 0 {
-		if err := writer.Write([]string{"Date", "Mood", "Energy", "Focus"}); err != nil {
+		if err := writer.Write([]string{"Date", "Mood", "Energy", "Focus", "Pills"}); err != nil {
 			return err
 		}
 	}
@@ -59,6 +66,7 @@ func Save(r Record) error {
 		strconv.Itoa(r.Mood),
 		strconv.Itoa(r.Energy),
 		strconv.Itoa(r.Focus),
+		strconv.Itoa(r.Pills),
 	}); err != nil {
 		return err
 	}
@@ -87,14 +95,15 @@ func Load() ([]Record, error) {
 	var records []Record
 
 	for _, row := range rows {
-		if len(row) < 4 {
+		if len(row) < 5 {
 			continue
 		}
 		mood, err1 := strconv.Atoi(row[1])
 		energy, err2 := strconv.Atoi(row[2])
 		focus, err3 := strconv.Atoi(row[3])
+		pills, err4 := strconv.Atoi(row[4])
 
-		if err1 != nil || err2 != nil || err3 != nil {
+		if err1 != nil || err2 != nil || err3 != nil || err4 != nil {
 			continue
 		}
 
@@ -103,6 +112,7 @@ func Load() ([]Record, error) {
 			Mood:   mood,
 			Energy: energy,
 			Focus:  focus,
+			Pills:  pills,
 		}
 
 		if err := r.Validate(); err != nil {
@@ -125,6 +135,9 @@ func (r Record) Validate() error {
 	}
 	if r.Focus < MinValue || r.Focus > MaxValue {
 		return fmt.Errorf("focus must be %d-%d", MinValue, MaxValue)
+	}
+	if r.Pills < PillsMin || r.Pills > PillsMax {
+		return fmt.Errorf("pills must be %d-%d", PillsMin, PillsMax)
 	}
 	return nil
 }

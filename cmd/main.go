@@ -17,6 +17,7 @@ func main() {
 	mood := flag.Int("mood", -1, "Mood (0-5)")
 	energy := flag.Int("energy", -1, "Energy (0-5)")
 	focus := flag.Int("focus", -1, "Focus (0-5)")
+	pills := flag.Int("pills", -1, "Pills (0-50)")
 
 	flag.Parse()
 
@@ -35,11 +36,11 @@ func main() {
 	if *statsFlag {
 		runStats(*last)
 	} else {
-		runAddWithFlag(mood, energy, focus)
+		runAddWithFlag(mood, energy, focus, pills)
 	}
 }
 
-func runAddWithFlag(moodF, energyF, focusF *int) {
+func runAddWithFlag(moodF, energyF, focusF, pillsF *int) {
 
 	mood, err := getValue(moodF, "Mood (0-5): ")
 	if err != nil {
@@ -56,8 +57,13 @@ func runAddWithFlag(moodF, energyF, focusF *int) {
 		fmt.Println("Error", err)
 		return
 	}
+	pills, err := getValuePills(pillsF, "Pills (0-50):")
+	if err != nil {
+		fmt.Println("Error", err)
+		return
+	}
 
-	record, err := storage.NewRecord(mood, energy, focus)
+	record, err := storage.NewRecord(mood, energy, focus, pills)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -106,4 +112,19 @@ func getValue(flagVal *int, prompt string) (int, error) {
 		return *flagVal, nil
 	}
 	return input.AskInt(prompt, storage.MinValue, storage.MaxValue)
+}
+
+func getValuePills(flagVal *int, prompt string) (int, error) {
+	if *flagVal != -1 {
+		if *flagVal < storage.PillsMin || *flagVal > storage.PillsMax {
+			fmt.Println("Invalid value, must be between", storage.PillsMin, storage.PillsMax)
+			return 0, fmt.Errorf("value must be between %d and %d", storage.PillsMin, storage.PillsMax)
+		}
+		return *flagVal, nil
+	}
+	input, err := input.AskInt(prompt, storage.PillsMin, storage.PillsMax)
+	if input <= storage.PillsLowThreshold {
+		fmt.Printf("Warning pills running low (%d left)\n", input)
+	}
+	return input, err
 }
