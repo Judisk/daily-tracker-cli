@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/Judisk/daily-tracker-cli/internal/input"
 	"github.com/Judisk/daily-tracker-cli/internal/stats"
@@ -39,36 +40,12 @@ func main() {
 	}
 }
 
-/*
-	func runAdd() {
-		mood := input.AskInt("Mood (0-5): ", 0, 5)
-		energy := input.AskInt("Energy (0-5): ", 0, 5)
-		focus := input.AskInt("Focus (0-5): ", 0, 5)
-
-		record := storage.NewRecord(mood, energy, focus)
-		storage.Save(record)
-
-}
-*/
 func runAddWithFlag(moodF, energyF, focusF *int) {
-	var mood, energy, focus int
 
-	if *moodF != -1 {
-		mood = *moodF
-	} else {
-		mood = input.AskInt("Mood (0-5): ", 0, 5)
-	}
-	if *energyF != -1 {
-		energy = *energyF
-	} else {
-		energy = input.AskInt("Energy (0-5): ", 0, 5)
-	}
+	mood := getValue(moodF, "Mood (0-5): ")
+	energy := getValue(energyF, "Energy (0-5): ")
+	focus := getValue(focusF, "Focus (0-5): ")
 
-	if *focusF != -1 {
-		focus = *focusF
-	} else {
-		focus = input.AskInt("Focus (0-5): ", 0, 5)
-	}
 	record, err := storage.NewRecord(mood, energy, focus)
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -97,6 +74,25 @@ func runStats(last int) {
 		}
 	}
 
-	fmt.Println("Records used:", len(records))
-	fmt.Println("Average mood:", stats.AvgMood(records))
+	avgMood := stats.Avg(records, func(r storage.Record) int { return r.Mood })
+
+	avgEnergy := stats.Avg(records, func(r storage.Record) int { return r.Energy })
+
+	avgFocus := stats.Avg(records, func(r storage.Record) int { return r.Focus })
+
+	fmt.Printf("Records used: %d\n", len(records))
+	fmt.Printf("Average mood:   %.2f\n", avgMood)
+	fmt.Printf("Average energy: %.2f\n", avgEnergy)
+	fmt.Printf("Average focus:  %.2f\n", avgFocus)
+}
+
+func getValue(flagVal *int, prompt string) int {
+	if *flagVal != -1 {
+		if *flagVal < storage.MinValue || *flagVal > storage.MaxValue {
+			fmt.Println("Invalid value, must be between", storage.MinValue, storage.MaxValue)
+			os.Exit(1)
+		}
+		return *flagVal
+	}
+	return input.AskInt(prompt, storage.MinValue, storage.MaxValue)
 }
