@@ -118,26 +118,30 @@ func Load() ([]Record, error) {
 		if err := r.Validate(); err != nil {
 			continue
 		}
-
 		records = append(records, r)
-
 	}
-
 	return records, nil
 }
 
 func (r Record) Validate() error {
-	if r.Mood < MinValue || r.Mood > MaxValue {
-		return fmt.Errorf("mood must be %d-%d", MinValue, MaxValue)
+	if err := ValidateRange(r.Mood, MinValue, MaxValue, "mood"); err != nil {
+		return err
 	}
-	if r.Energy < MinValue || r.Energy > MaxValue {
-		return fmt.Errorf("energy must be %d-%d", MinValue, MaxValue)
+	if err := ValidateRange(r.Energy, MinValue, MaxValue, "energy"); err != nil {
+		return err
 	}
-	if r.Focus < MinValue || r.Focus > MaxValue {
-		return fmt.Errorf("focus must be %d-%d", MinValue, MaxValue)
+	if err := ValidateRange(r.Focus, MinValue, MaxValue, "focus"); err != nil {
+		return err
 	}
-	if r.Pills < PillsMin || r.Pills > PillsMax {
-		return fmt.Errorf("pills must be %d-%d", PillsMin, PillsMax)
+	if err := ValidateRange(r.Pills, PillsMin, PillsMax, "pills"); err != nil {
+		return err
+	}
+	return nil
+}
+
+func ValidateRange(value, min, max int, fieldName string) error {
+	if value < min || value > max {
+		return fmt.Errorf("%s must be %d-%d", fieldName, min, max)
 	}
 	return nil
 }
