@@ -2,20 +2,9 @@ package storage
 
 import (
 	"encoding/csv"
-	"fmt"
 	"os"
 	"strconv"
 	"time"
-)
-
-const (
-	MinValue = 0
-	MaxValue = 5
-)
-const (
-	PillsMin          = 0
-	PillsMax          = 50
-	PillsLowThreshold = 7
 )
 
 type Record struct {
@@ -36,9 +25,6 @@ func NewRecord(mood, energy, focus, pills int) (Record, error) {
 		Pills:  pills,
 	}
 
-	if err := r.Validate(); err != nil {
-		return Record{}, err
-	}
 	return r, nil
 }
 
@@ -115,33 +101,7 @@ func Load() ([]Record, error) {
 			Pills:  pills,
 		}
 
-		if err := r.Validate(); err != nil {
-			continue
-		}
 		records = append(records, r)
 	}
 	return records, nil
-}
-
-func (r Record) Validate() error {
-	if err := ValidateRange(r.Mood, MinValue, MaxValue, "mood"); err != nil {
-		return err
-	}
-	if err := ValidateRange(r.Energy, MinValue, MaxValue, "energy"); err != nil {
-		return err
-	}
-	if err := ValidateRange(r.Focus, MinValue, MaxValue, "focus"); err != nil {
-		return err
-	}
-	if err := ValidateRange(r.Pills, PillsMin, PillsMax, "pills"); err != nil {
-		return err
-	}
-	return nil
-}
-
-func ValidateRange(value, min, max int, fieldName string) error {
-	if value < min || value > max {
-		return fmt.Errorf("%s must be %d-%d", fieldName, min, max)
-	}
-	return nil
 }
