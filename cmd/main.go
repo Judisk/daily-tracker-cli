@@ -1,24 +1,31 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
+	"io"
+	"os"
 
 	"github.com/Judisk/daily-tracker-cli/internal/input"
+	"github.com/Judisk/daily-tracker-cli/internal/model"
 	"github.com/Judisk/daily-tracker-cli/internal/stats"
 	"github.com/Judisk/daily-tracker-cli/internal/storage"
 )
+
+var reader = bufio.NewReader(os.Stdin)
 
 func main() {
 
 	add := flag.Bool("add", false, "Add new record")
 	statsFlag := flag.Bool("stats", false, "Show stats")
 	last := flag.Int("last", 0, "Show last N days")
+	/* пока делаю без флагов потом придумаю как их внедрить в input
 	mood := flag.Int("mood", -1, "Mood (0-5)")
 	energy := flag.Int("energy", -1, "Energy (0-5)")
 	focus := flag.Int("focus", -1, "Focus (0-5)")
 	pills := flag.Int("pills", -1, "Pills (0-50)")
-
+	*/
 	flag.Parse()
 
 	if *add && *statsFlag {
@@ -36,33 +43,33 @@ func main() {
 	if *statsFlag {
 		runStats(*last)
 	} else {
-		runAddWithFlag(mood, energy, focus, pills)
+		runAddWithFlag()
 	}
 }
 
-func runAddWithFlag(moodF, energyF, focusF, pillsF *int) {
+func runAddWithFlag() {
 
-	mood, err := getValue(moodF, "Mood (0-5): ", storage.MinValue, storage.MaxValue)
+	mood, err := getValue(reader, "Mood 0-5", input.ParseAndValidateInt("mood", model.MinValue, model.MaxValue))
 	if err != nil {
 		fmt.Println("Error", err)
 		return
 	}
-	energy, err := getValue(energyF, "Energy (0-5): ", storage.MinValue, storage.MaxValue)
+	energy, err := getValue(reader, "Energy 0-5", input.ParseAndValidateInt("energy", model.MinValue, model.MaxValue))
 	if err != nil {
 		fmt.Println("Error", err)
 		return
 	}
-	focus, err := getValue(focusF, "Focus (0-5): ", storage.MinValue, storage.MaxValue)
+	focus, err := getValue(reader, "Focus 0-5", input.ParseAndValidateInt("focus", model.MinValue, model.MaxValue))
 	if err != nil {
 		fmt.Println("Error", err)
 		return
 	}
-	pills, err := getValue(pillsF, "Pills (0-50): ", storage.PillsMin, storage.PillsMax)
+	pills, err := getValue(reader, "Pills 0-50", input.ParseAndValidateInt("pills", model.MinValue, model.PillsMax))
 	if err != nil {
 		fmt.Println("Error", err)
 		return
 	}
-	if pills <= storage.PillsLowThreshold {
+	if pills <= model.PillsLowThreshold {
 		fmt.Printf("Warning pills running low (%d left)\n", pills)
 	}
 
@@ -109,7 +116,25 @@ func runStats(last int) {
 	fmt.Printf("Average focus:  %.2f\n", avgFocus)
 }
 
-func getValue(flagVal *int, prompt string, min, max int) (int, error) {
+func getValue[T any](r *bufio.Reader, prompt string, f func(string) (T, error)) (v T, err error) {
+
+	fmt.Print(prompt)
+	for {
+		fmt.Print(" -> ")
+		v, err := input.Input(r, f)
+		if err != nil {
+			if err == io.EOF {
+				return v, err
+			}
+			fmt.Println(err)
+			continue
+		}
+		return v, nil
+	}
+}
+
+/*
+func getValue(flagVal *int, prompt string, min, max int, f func(string)()) (int, error) {
 	if *flagVal != -1 {
 		if *flagVal < min || *flagVal > max {
 			fmt.Println("Invalid value, must be between", min, max)
@@ -117,5 +142,10 @@ func getValue(flagVal *int, prompt string, min, max int) (int, error) {
 		}
 		return *flagVal, nil
 	}
-	return input.AskInt(prompt, min, max)
-}
+	for {
+		v, err := input.Input(reader)
+		if err != nil {
+
+		}
+	}
+}*/

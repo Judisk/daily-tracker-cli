@@ -2,49 +2,16 @@ package input
 
 import (
 	"bufio"
-	"io"
+	"fmt"
+	"strconv"
 	"strings"
+	"time"
 )
 
-/*
-var filedNameInt = map[string]int{"mood": 1, "sleep quality": 1, "energy": 1, "focus": 1}
-
-const fieldNamePills = "pills"
-
-var fieldNameTime = map[string]int{"went to bed": 1, "took meds": 1, "fellAsleep": 1, "woke up": 1}
-
-	func InputInt(r io.Reader, fieldName string, min, max int) (int, error) {
-		reader := bufio.NewReader(r)
-
-		s, err := reader.ReadString('\n')
-		if err != nil {
-			return 0, err
-		}
-		s = strings.TrimSpace(s)
-
-		value, err := parseAndValidateInt(s, fieldName, min, max)
-		if err != nil {
-			return 0, err
-		}
-
-		return value, nil
-	}
-
-	func InputTime(r io.Reader) (t time.Time, err error) {
-		reader := bufio.NewReader(r)
-		s, err := reader.ReadString('\n')
-		if err != nil {
-			return t, err
-		}
-		s = strings.TrimSpace(s)
-		return parseAndValidateTime(s)
-	}
-*/
-
-func Input[T any](r io.Reader, f func(string) (T, error)) (T, error) {
-	reader := bufio.NewReader(r)
+func Input[T any](r *bufio.Reader, f func(string) (T, error)) (T, error) {
 	var zero T
-	s, err := reader.ReadString('\n')
+
+	s, err := r.ReadString('\n')
 	if err != nil {
 		return zero, err
 	}
@@ -54,7 +21,32 @@ func Input[T any](r io.Reader, f func(string) (T, error)) (T, error) {
 	if err != nil {
 		return zero, err
 	}
-
 	return result, nil
 
+}
+
+func ParseAndValidateInt(fieldName string, min, max int) func(string) (int, error) {
+	return func(s string) (int, error) {
+		num, err := strconv.Atoi(s)
+		if err != nil {
+			return 0, err
+		}
+		if num < min || num > max {
+			return 0, fmt.Errorf("%s must be %d-%d", fieldName, min, max)
+		}
+
+		return num, nil
+	}
+}
+
+func ParseAndValidateTime() func(string) (time.Time, error) {
+	return func(s string) (time.Time, error) {
+		return time.Parse("15:04", s)
+	}
+}
+
+func StringValidation() func(string) (string, error) {
+	return func(s string) (string, error) {
+		return s, nil
+	}
 }

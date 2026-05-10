@@ -1,6 +1,7 @@
 package input
 
 import (
+	"bufio"
 	"strconv"
 	"strings"
 	"testing"
@@ -8,9 +9,9 @@ import (
 )
 
 func TestInputInt(t *testing.T) {
-	reader := strings.NewReader("5\n")
-
-	result, err := Input(reader, parseAndValidateInt("mood", 0, 5))
+	raw := strings.NewReader("5\n")
+	reader := bufio.NewReader(raw)
+	result, err := Input(reader, ParseAndValidateInt("mood", 0, 5))
 
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -23,9 +24,9 @@ func TestInputInt(t *testing.T) {
 
 func TestInputIntPills(t *testing.T) {
 	test := 50
-	reader := strings.NewReader(strconv.Itoa(test) + "\n")
-
-	result, err := Input(reader, parseAndValidateInt("mood", 0, 50))
+	raw := strings.NewReader(strconv.Itoa(test) + "\n")
+	reader := bufio.NewReader(raw)
+	result, err := Input(reader, ParseAndValidateInt("pills", 0, 50))
 
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -37,9 +38,9 @@ func TestInputIntPills(t *testing.T) {
 }
 
 func TestInputIntInvalidNegative(t *testing.T) {
-	reader := strings.NewReader("-5\n")
-
-	_, err := Input(reader, parseAndValidateInt("mood", 0, 5))
+	raw := strings.NewReader("-5\n")
+	reader := bufio.NewReader(raw)
+	_, err := Input(reader, ParseAndValidateInt("mood", 0, 5))
 
 	if err == nil {
 		t.Errorf("expected error , got nil")
@@ -48,9 +49,10 @@ func TestInputIntInvalidNegative(t *testing.T) {
 }
 
 func TestInputIntInvalid(t *testing.T) {
-	reader := strings.NewReader("abc\n")
+	raw := strings.NewReader("abc\n")
+	reader := bufio.NewReader(raw)
 
-	_, err := Input(reader, parseAndValidateInt("mood", 0, 5))
+	_, err := Input(reader, ParseAndValidateInt("mood", 0, 5))
 
 	if err == nil {
 		t.Errorf("expected error , got nil")
@@ -59,9 +61,10 @@ func TestInputIntInvalid(t *testing.T) {
 
 func TestInputTime(t *testing.T) {
 	test := "00:00"
-	reader := strings.NewReader(test + "\n")
+	raw := strings.NewReader(test + "\n")
+	reader := bufio.NewReader(raw)
 
-	result, err := Input(reader, parseAndValidateTime())
+	result, err := Input(reader, ParseAndValidateTime())
 	if err != nil {
 		t.Fatalf("unexpected error")
 	}
@@ -72,11 +75,28 @@ func TestInputTime(t *testing.T) {
 	}
 }
 
+/*
+	func TestInputIntManyTimes(t *testing.T) {
+		reader := strings.NewReader("-5\n5\n")
+
+		result, err := Input(reader, ParseAndValidateInt("mood", 0, 5))
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if result != 5 {
+			t.Errorf("expected 5, got %d", result)
+		}
+
+}
+*/
+
 func TestInputInvalidTime(t *testing.T) {
 	test := "abc"
-	reader := strings.NewReader(test + "\n")
+	raw := strings.NewReader(test + "\n")
+	reader := bufio.NewReader(raw)
 
-	_, err := Input(reader, parseAndValidateTime())
+	_, err := Input(reader, ParseAndValidateTime())
 	if err == nil {
 		t.Errorf("expected error")
 	}
@@ -85,9 +105,10 @@ func TestInputInvalidTime(t *testing.T) {
 
 func TestInputString(t *testing.T) {
 	test := "abc"
-	reader := strings.NewReader(test + "\n")
+	raw := strings.NewReader(test + "\n")
+	reader := bufio.NewReader(raw)
 
-	result, err := Input(reader, stringValidation())
+	result, err := Input(reader, StringValidation())
 	if err != nil {
 		t.Errorf("unexpected error")
 	}
