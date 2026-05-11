@@ -1,119 +1,207 @@
 # Daily Tracker CLI
 
-Simple CLI tool to track your daily state: mood, energy, focus — and pills.
+A terminal-based health and productivity tracker written in Go.
+
+The project is focused on:
+
+* sleep tracking,
+* mood and focus monitoring,
+* medication tracking,
+* statistics,
+* data export,
+* input validation.
 
 ---
 
-## 🚀 Quick Start
+# 🚀 Quick Start
 
-git clone https://github.com/Judisk/daily-tracker-cli  
-cd daily-tracker-cli  
+Clone the repository:
+
+```bash
+git clone https://github.com/Judisk/daily-tracker-cli
+cd daily-tracker-cli
+```
+
+Add a new record:
+
+```bash
 go run ./cmd --add
+```
 
-Example:
+Show statistics:
 
-$ go run ./cmd --add  
-Mood (0-5): 4  
-Energy (0-5): 3  
-Focus (0-5): 5  
-Pills (0-50): 6  
-Warning pills running low (6 left)  
-Saved ✅
+```bash
+go run ./cmd --stats
+```
+
+Export data to CSV:
+
+```bash
+go run ./cmd --export
+```
 
 ---
 
-## 📊 Stats
+# 📝 Example
 
+```text
+$ go run ./cmd --add
+
+Went to bed -> 23:10
+Fell asleep -> 23:40
+Woke up -> 07:30
+Sleep quality 0-5 -> 4
+
+Mood 0-5 -> 3
+Energy 0-5 -> 2
+Focus 0-5 -> 4
+
+Took meds -> 08:00
+Pills 0-50 -> 12
+
+Notes -> felt productive today
+Side Effects -> none
+
+Saved ✅
+```
+
+---
+
+# 📊 Statistics
+
+```bash
 go run ./cmd --stats
+```
 
-Last N days:
+Last N records:
 
+```bash
 go run ./cmd --stats --last 7
+```
 
 Example output:
 
-Records used: 7  
-Average mood:   3.71  
-Average energy: 3.42  
-Average focus:  4.00  
+```text
+Records used: 7
+Average sleep quality: 4.14
+Average mood:          3.71
+Average energy:        3.42
+Average focus:         4.00
+```
 
 ---
 
-## ⚙️ Usage
+# 📤 Export
 
-### Add record
+Export all saved records into CSV format:
 
-go run ./cmd --add
+```bash
+go run ./cmd --export
+```
 
-Or with flags:
+Generated file:
 
-go run ./cmd --add --mood 4 --energy 3 --focus 5 --pills 10
-
----
-
-### Flags
-
---mood    Mood level (0–5)  
---energy  Energy level (0–5)  
---focus   Focus level (0–5)  
---pills   Pills left (0–50)  
---stats   Show statistics  
---last    Last N records  
-
----
-
-## 📁 Data Storage
-
-Data is stored locally in:
-
+```text
 data/data.csv
-
-Example:
-
-Date,Mood,Energy,Focus,Pills  
-2026-05-06,4,3,5,10  
+```
 
 ---
 
-## ✨ Features
+# ⚙️ Available Commands
 
-- CLI-based daily tracking  
-- Interactive input or flags  
-- CSV storage  
-- Average statistics  
-- Last N records filtering  
-- Input validation  
-- Pills low warning  
+## Add a record
+
+```bash
+go run ./cmd --add
+```
+
+## Show statistics
+
+```bash
+go run ./cmd --stats
+```
+
+## Show statistics for last N records
+
+```bash
+go run ./cmd --stats --last 7
+```
+
+## Export JSON data to CSV
+
+```bash
+go run ./cmd --export
+```
 
 ---
 
-## 🧠 Why this project?
+# 📁 Data Storage
+
+Data is stored locally in JSON format:
+
+```text
+data/data.json
+```
+
+CSV export:
+
+```text
+data/data.csv
+```
+
+---
+
+# ✨ Features
+
+* Interactive CLI input
+* Generic reusable input system
+* Sleep tracking
+* Sleep duration calculation
+* Mood / energy / focus tracking
+* Medication tracking
+* Notes and side effects logging
+* JSON storage
+* CSV export
+* Average statistics
+* Last N records filtering
+* Input validation
+* Generic statistics functions
+* Unit tests
+
+---
+
+# 🧠 Why this project?
 
 This project was built to:
 
-- practice Go (CLI, file IO, validation)  
-- track personal daily metrics  
-- experiment with simple data analysis  
+* practice Go,
+* learn CLI application architecture,
+* work with JSON and CSV,
+* practice validation and generic functions,
+* experiment with data tracking and analysis.
 
 ---
 
-## 🛠 Tech Stack
+# 🛠 Tech Stack
 
-- Go (standard library)  
-- CSV for storage  
-
----
-
-## 📌 Roadmap
-
-- Add pills consumption tracking  
-- Show pills stats  
-- Add edit/delete commands  
-- JSON export  
-- Tests  
+* Go (standard library)
+* JSON for storage
+* CSV export
 
 ---
 
-## 📄 License
+# 📌 Roadmap
+
+* GUI version
+* Record editing
+* Record deletion
+* Better sleep validation
+* Charts and visual statistics
+* SQLite support
+* Configurable reminders
+
+---
+
+# 📄 License
 
 MIT
