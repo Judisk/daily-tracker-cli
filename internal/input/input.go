@@ -25,7 +25,7 @@ func Input[T any](r *bufio.Reader, f func(string) (T, error)) (T, error) {
 
 }
 
-func ParseAndValidateInt(fieldName string, min, max int) func(string) (int, error) {
+func IntValidator(fieldName string, min, max int) func(string) (int, error) {
 	return func(s string) (int, error) {
 		num, err := strconv.Atoi(s)
 		if err != nil {
@@ -39,7 +39,7 @@ func ParseAndValidateInt(fieldName string, min, max int) func(string) (int, erro
 	}
 }
 
-func ParseAndValidateTime() func(string) (time.Time, error) {
+func TimeValidator() func(string) (time.Time, error) {
 	return func(s string) (time.Time, error) {
 		return time.Parse("15:04", s)
 	}

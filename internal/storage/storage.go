@@ -1,107 +1,46 @@
 package storage
 
 import (
-	"encoding/csv"
+	"encoding/json"
 	"os"
-	"strconv"
-	"time"
+
+	"github.com/Judisk/daily-tracker-cli/internal/model"
 )
 
-type Record struct {
-	Date   string
-	Mood   int
-	Energy int
-	Focus  int
-	Pills  int
-}
+func Save(r model.Record) error {
 
-func NewRecord(mood, energy, focus, pills int) (Record, error) {
-
-	r := Record{
-		Date:   time.Now().Format("2006-01-02"),
-		Mood:   mood,
-		Energy: energy,
-		Focus:  focus,
-		Pills:  pills,
-	}
-
-	return r, nil
-}
-
-func Save(r Record) error {
-	file, err := os.OpenFile("data/data.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	records, err := Load()
 	if err != nil {
 		return err
 	}
-	defer file.Close()
 
-	writer := csv.NewWriter(file)
+	records = append(records, r)
 
-	stat, err := file.Stat()
+	data, err := json.MarshalIndent(records, "", " ")
 	if err != nil {
 		return err
 	}
-	if stat.Size() == 0 {
-		if err := writer.Write([]string{"Date", "Mood", "Energy", "Focus", "Pills"}); err != nil {
-			return err
-		}
-	}
 
-	if err := writer.Write([]string{
-		r.Date,
-		strconv.Itoa(r.Mood),
-		strconv.Itoa(r.Energy),
-		strconv.Itoa(r.Focus),
-		strconv.Itoa(r.Pills),
-	}); err != nil {
-		return err
-	}
-	writer.Flush()
-
-	return writer.Error()
+	return os.WriteFile("data/data.json", data, 0644)
 
 }
 
-func Load() ([]Record, error) {
-	file, err := os.Open("data/data.csv")
+func Load() ([]model.Record, error) {
+	data, err := os.ReadFile("data/data.json")
 	if err != nil {
 		if os.IsNotExist(err) {
-			return []Record{}, nil
+			return []model.Record{}, nil
 		}
 		return nil, err
 	}
-	defer file.Close()
 
-	reader := csv.NewReader(file)
-	rows, err := reader.ReadAll()
+	var recodrs []model.Record
+
+	err = json.Unmarshal(data, &recodrs)
 	if err != nil {
 		return nil, err
 	}
 
-	var records []Record
+	return recodrs, nil
 
-	for _, row := range rows {
-		if len(row) < 5 {
-			continue
-		}
-		mood, err1 := strconv.Atoi(row[1])
-		energy, err2 := strconv.Atoi(row[2])
-		focus, err3 := strconv.Atoi(row[3])
-		pills, err4 := strconv.Atoi(row[4])
-
-		if err1 != nil || err2 != nil || err3 != nil || err4 != nil {
-			continue
-		}
-
-		r := Record{
-			Date:   row[0],
-			Mood:   mood,
-			Energy: energy,
-			Focus:  focus,
-			Pills:  pills,
-		}
-
-		records = append(records, r)
-	}
-	return records, nil
 }

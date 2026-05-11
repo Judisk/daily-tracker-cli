@@ -2,19 +2,34 @@ package main
 
 import (
 	"bufio"
+	"io"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/Judisk/daily-tracker-cli/internal/input"
 	"github.com/Judisk/daily-tracker-cli/internal/model"
 )
 
-func TestGetValueInt1Time(t *testing.T) {
+var testFieldInt = Field[int]{
+	prompt:   "value",
+	Validate: input.IntValidator("value", model.MinValue, model.MaxValue),
+}
+var testFieldTime = Field[time.Time]{
+	prompt:   "value",
+	Validate: input.TimeValidator(),
+}
+var testFieldString = Field[string]{
+	prompt:   "value",
+	Validate: input.StringValidation(),
+}
+
+func TestGetValueInt(t *testing.T) {
 	test := "5"
 	raw := strings.NewReader(test + "\n")
 	reader := bufio.NewReader(raw)
 
-	result, err := getValue(reader, "Mood 0-5", input.ParseAndValidateInt("mood", model.MinValue, model.MaxValue))
+	result, err := getValue(reader, testFieldInt)
 
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -24,16 +39,26 @@ func TestGetValueInt1Time(t *testing.T) {
 	}
 }
 
-func TestInvalidGetValueIntNegative(t *testing.T) {
-	test := "-5"
-	raw := strings.NewReader(test + "\n")
+func TestGetValueIntRetry(t *testing.T) {
+	raw := strings.NewReader("-5\nabc\n5\n")
 	reader := bufio.NewReader(raw)
-
-	_, err := getValue(reader, "Mood 0-5", input.ParseAndValidateInt("mood", model.MinValue, model.MaxValue))
-
-	if err == nil {
-		t.Fatalf("expected error")
+	result, err := getValue(reader, testFieldInt)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
 	}
+	if result != 5 {
+		t.Errorf("expected 5, got %d", result)
+	}
+}
+
+func TestGetValueEOF(t *testing.T) {
+	raw := strings.NewReader("-5\nabc\n")
+	reader := bufio.NewReader(raw)
+	_, err := getValue(reader, testFieldInt)
+	if err != io.EOF {
+		t.Fatalf("expected EOF, got %v", err)
+	}
+
 }
 
 func TestGetValueIntNTimes(t *testing.T) {
@@ -43,13 +68,7 @@ func TestGetValueIntNTimes(t *testing.T) {
 	)
 	reader := bufio.NewReader(raw)
 
-	result, err := getValue(
-		reader,
-		"Mood 0-5",
-		input.ParseAndValidateInt("mood",
-			model.MinValue,
-			model.MaxValue),
-	)
+	result, err := getValue(reader, testFieldInt)
 
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -59,15 +78,20 @@ func TestGetValueIntNTimes(t *testing.T) {
 	}
 }
 
-func TestInvalidGetValueTime1Time(t *testing.T) {
-	test := "05:3"
-	raw := strings.NewReader(test + "\n")
+func TestGetValueTimeRetry(t *testing.T) {
+	test := "12:30"
+	raw := strings.NewReader("05:3\n221\n12.30\n" + test + "\n")
 	reader := bufio.NewReader(raw)
 
-	_, err := getValue(reader, "Mood 0-5", input.ParseAndValidateTime())
+	result, err := getValue(reader, testFieldTime)
 
-	if err == nil {
-		t.Errorf("expected error")
+	if err != nil {
+		t.Fatalf("unexpected error")
+	}
+	want, _ := time.Parse("15:04", test)
+
+	if !result.Equal(want) {
+		t.Errorf("got %v, want %v", result, want)
 	}
 }
 
@@ -76,13 +100,13 @@ func TestGetString(t *testing.T) {
 	raw := strings.NewReader(test + "\n")
 	reader := bufio.NewReader(raw)
 
-	result, err := getValue(reader, "Mood 0-5", input.StringValidation())
+	result, err := getValue(reader, testFieldString)
 
 	if err != nil {
 		t.Fatalf("unexpected error")
 	}
 	if result != test {
-		t.Fatalf("unexpected error")
+		t.Fatalf("expected %q, got %q", test, result)
 	}
 
 }
