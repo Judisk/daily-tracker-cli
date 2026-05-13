@@ -2,7 +2,7 @@ package sleep
 
 import "time"
 
-func Sleep(wokeUp, fellAsleep time.Time) time.Duration {
+func Duration(wokeUp, fellAsleep time.Time) time.Duration {
 	sleepDuration := wokeUp.Sub(fellAsleep)
 
 	if sleepDuration < 0 {

@@ -1,4 +1,4 @@
-package app
+package cli
 
 import (
 	"bufio"
@@ -7,21 +7,21 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Judisk/daily-tracker-cli/internal/input"
 	"github.com/Judisk/daily-tracker-cli/internal/model"
+	"github.com/Judisk/daily-tracker-cli/internal/validation"
 )
 
 var testFieldInt = Field[int]{
 	prompt:   "value",
-	Validate: input.IntValidator("value", model.MinValue, model.MaxValue),
+	Validate: validation.Int("value", model.MinValue, model.MaxValue),
 }
 var testFieldTime = Field[time.Time]{
 	prompt:   "value",
-	Validate: input.TimeValidator(),
+	Validate: validation.Time(),
 }
 var testFieldString = Field[string]{
 	prompt:   "value",
-	Validate: input.StringValidation(),
+	Validate: validation.String(),
 }
 
 func TestGetValueInt(t *testing.T) {
