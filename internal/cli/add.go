@@ -8,10 +8,10 @@ import (
 	"github.com/Judisk/daily-tracker-cli/internal/storage"
 )
 
-func RunAdd(r *bufio.Reader) error {
+func Add(r *bufio.Reader) error {
 
-	fields := NewFields()
-	record, err := NewRecord(r, fields)
+	fields := newFields()
+	record, err := newRecord(r, fields)
 	if err != nil {
 		return err
 	}

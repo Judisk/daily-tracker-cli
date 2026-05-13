@@ -11,15 +11,15 @@ import (
 	"github.com/Judisk/daily-tracker-cli/internal/validation"
 )
 
-var testFieldInt = Field[int]{
+var testFieldInt = formField[int]{
 	prompt:   "value",
 	Validate: validation.Int("value", model.MinValue, model.MaxValue),
 }
-var testFieldTime = Field[time.Time]{
+var testFieldTime = formField[time.Time]{
 	prompt:   "value",
 	Validate: validation.Time(),
 }
-var testFieldString = Field[string]{
+var testFieldString = formField[string]{
 	prompt:   "value",
 	Validate: validation.String(),
 }

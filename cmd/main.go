@@ -38,7 +38,7 @@ func main() {
 	if *statsFlag {
 		stats.RunStats(*last)
 	} else if *addFlag {
-		if err := cli.RunAdd(reader); err != nil {
+		if err := cli.Add(reader); err != nil {
 			fmt.Println(err)
 			return
 		}

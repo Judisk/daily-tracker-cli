@@ -8,68 +8,65 @@ import (
 	"github.com/Judisk/daily-tracker-cli/internal/validation"
 )
 
-type Field[T any] struct {
+type formField[T any] struct {
 	prompt   string
 	Validate func(string) (T, error)
 }
 
-type Fields struct {
-	WentToBed  Field[time.Time]
-	FellAsleep Field[time.Time]
-	WokeUp     Field[time.Time]
-	TookMeds   Field[time.Time]
+type fields struct {
+	wentToBed  formField[time.Time]
+	fellAsleep formField[time.Time]
+	wokeUp     formField[time.Time]
+	tookMeds   formField[time.Time]
 
-	SleepQuality Field[int]
-	Mood         Field[int]
-	Energy       Field[int]
-	Focus        Field[int]
-	Pills        Field[int]
+	sleepQuality formField[int]
+	mood         formField[int]
+	energy       formField[int]
+	focus        formField[int]
+	pills        formField[int]
 
-	Notes       Field[string]
-	SideEffects Field[string]
+	notes       formField[string]
+	sideEffects formField[string]
 }
 
-func NewFields() Fields {
+func newFields() fields {
 
-	return Fields{
+	return fields{
 
-		WentToBed:  newTimeField("Went to bed"),
-		FellAsleep: newTimeField("Fell asleep"),
-		WokeUp:     newTimeField("Woke up"),
-		TookMeds:   newTimeField("Took meds"),
+		wentToBed:  newTimeField("Went to bed"),
+		fellAsleep: newTimeField("Fell asleep"),
+		wokeUp:     newTimeField("Woke up"),
+		tookMeds:   newTimeField("Took meds"),
 
-		SleepQuality: newIntField("Sleep quality", model.MinValue, model.MaxValue),
-		Mood:         newIntField("Mood", model.MinValue, model.MaxValue),
-		Energy:       newIntField("Energy", model.MinValue, model.MaxValue),
-		Focus:        newIntField("Focus", model.MinValue, model.MaxValue),
-		Pills:        newIntField("Pills", model.MinValue, model.PillsMax),
+		sleepQuality: newIntField("Sleep quality", model.MinValue, model.MaxValue),
+		mood:         newIntField("Mood", model.MinValue, model.MaxValue),
+		energy:       newIntField("Energy", model.MinValue, model.MaxValue),
+		focus:        newIntField("Focus", model.MinValue, model.MaxValue),
+		pills:        newIntField("Pills", model.MinValue, model.PillsMax),
 
-		Notes:       newStringField("Notes"),
-		SideEffects: newStringField("Side Effects")}
+		notes:       newStringField("Notes"),
+		sideEffects: newStringField("Side Effects")}
 }
 
-func newIntField(prompt string, min, max int) Field[int] {
-	field := Field[int]{
+func newIntField(prompt string, min, max int) formField[int] {
+	field := formField[int]{
 		prompt:   fmt.Sprintf("%s %d-%d", prompt, min, max),
 		Validate: validation.Int(prompt, min, max),
 	}
-
 	return field
 }
 
-func newTimeField(prompt string) Field[time.Time] {
-	field := Field[time.Time]{
+func newTimeField(prompt string) formField[time.Time] {
+	field := formField[time.Time]{
 		prompt:   prompt,
 		Validate: validation.Time(),
 	}
-
 	return field
 }
-func newStringField(prompt string) Field[string] {
-	field := Field[string]{
+func newStringField(prompt string) formField[string] {
+	field := formField[string]{
 		prompt:   prompt,
 		Validate: validation.String(),
 	}
-
 	return field
 }

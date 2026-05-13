@@ -11,7 +11,7 @@ import (
 	"github.com/Judisk/daily-tracker-cli/internal/sleep"
 )
 
-func getValue[T any](r *bufio.Reader, str Field[T]) (v T, err error) {
+func getValue[T any](r *bufio.Reader, str formField[T]) (v T, err error) {
 
 	fmt.Print(str.prompt)
 	for {
@@ -28,51 +28,51 @@ func getValue[T any](r *bufio.Reader, str Field[T]) (v T, err error) {
 	}
 }
 
-func NewRecord(r *bufio.Reader, f Fields) (model.Record, error) {
+func newRecord(r *bufio.Reader, f fields) (model.Record, error) {
 
-	wentToBed, err := getValue(r, f.WentToBed)
+	wentToBed, err := getValue(r, f.wentToBed)
 	if err != nil {
 
 		return model.Record{}, fmt.Errorf("get went to bed: %w", err)
 	}
 
-	fellAsleep, err := getValue(r, f.FellAsleep)
+	fellAsleep, err := getValue(r, f.fellAsleep)
 	if err != nil {
 		return model.Record{}, fmt.Errorf("get fell asleep: %w", err)
 	}
-	wokeUp, err := getValue(r, f.WokeUp)
+	wokeUp, err := getValue(r, f.wokeUp)
 	if err != nil {
 		return model.Record{}, fmt.Errorf("get woke up: %w", err)
 	}
-	sleepQuality, err := getValue(r, f.SleepQuality)
+	sleepQuality, err := getValue(r, f.sleepQuality)
 	if err != nil {
 		return model.Record{}, fmt.Errorf("get sleep quality: %w", err)
 	}
-	mood, err := getValue(r, f.Mood)
+	mood, err := getValue(r, f.mood)
 	if err != nil {
-		return model.Record{}, fmt.Errorf("get mood %w", err)
+		return model.Record{}, fmt.Errorf("get mood :%w", err)
 	}
-	energy, err := getValue(r, f.Energy)
+	energy, err := getValue(r, f.energy)
 	if err != nil {
 		return model.Record{}, fmt.Errorf("get energy: %w", err)
 	}
-	focus, err := getValue(r, f.Focus)
+	focus, err := getValue(r, f.focus)
 	if err != nil {
 		return model.Record{}, fmt.Errorf("get focus: %w", err)
 	}
-	tookMeds, err := getValue(r, f.TookMeds)
+	tookMeds, err := getValue(r, f.tookMeds)
 	if err != nil {
 		return model.Record{}, fmt.Errorf("get took meds: %w", err)
 	}
-	pills, err := getValue(r, f.Pills)
+	pills, err := getValue(r, f.pills)
 	if err != nil {
-		return model.Record{}, fmt.Errorf("get pills %w", err)
+		return model.Record{}, fmt.Errorf("get pills: %w", err)
 	}
-	notes, err := getValue(r, f.Notes)
+	notes, err := getValue(r, f.notes)
 	if err != nil {
-		return model.Record{}, fmt.Errorf("get motes: %w", err)
+		return model.Record{}, fmt.Errorf("get notes: %w", err)
 	}
-	sideEffects, err := getValue(r, f.SideEffects)
+	sideEffects, err := getValue(r, f.sideEffects)
 	if err != nil {
 		return model.Record{}, fmt.Errorf("get side effects: %w", err)
 	}
