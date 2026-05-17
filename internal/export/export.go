@@ -45,8 +45,7 @@ func ExportJsonToCsv() error {
 			strconv.Itoa(r.Pills),
 			r.TookMeds.Format("15:04"),
 			r.Notes,
-			r.SideEffects,
-		}); err != nil {
+			r.SideEffects}); err != nil {
 			return err
 		}
 	}

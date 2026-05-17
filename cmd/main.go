@@ -8,6 +8,7 @@ import (
 
 	"github.com/Judisk/daily-tracker-cli/internal/cli"
 	"github.com/Judisk/daily-tracker-cli/internal/export"
+	"github.com/Judisk/daily-tracker-cli/internal/gui"
 	"github.com/Judisk/daily-tracker-cli/internal/stats"
 )
 
@@ -18,6 +19,7 @@ func main() {
 	statsFlag := flag.Bool("stats", false, "Show stats")
 	last := flag.Int("last", 0, "Show last N days")
 	exportFlag := flag.Bool("export", false, "Export to CSV")
+	guiFlag := flag.Bool("gui", false, "gui version")
 
 	flag.Parse()
 
@@ -26,7 +28,7 @@ func main() {
 		return
 	}
 
-	if !*addFlag && !*statsFlag && !*exportFlag {
+	if !*addFlag && !*statsFlag && !*exportFlag && !*guiFlag {
 		fmt.Println("Usage:")
 		fmt.Println("  --add    Add new record")
 		fmt.Println("  --stats  Show stats")
@@ -35,18 +37,22 @@ func main() {
 
 		return
 	}
-	if *statsFlag {
+	switch {
+	case *statsFlag:
 		stats.RunStats(*last)
-	} else if *addFlag {
+	case *addFlag:
 		if err := cli.Add(reader); err != nil {
 			fmt.Println(err)
 			return
 		}
-	} else {
+	case *exportFlag:
 		if err := export.ExportJsonToCsv(); err != nil {
 			fmt.Println(err)
 			return
 		}
+	case *guiFlag:
+		gui.RunGui()
+
 	}
 
 }
