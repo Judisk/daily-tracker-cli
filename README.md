@@ -1,15 +1,17 @@
-# Daily Tracker CLI
+# Daily Tracker
 
-A terminal-based health and productivity tracker written in Go.
+A health and productivity tracker written in Go.
 
-The project is focused on:
+The project includes:
 
+* CLI interface,
+* GUI interface built with Fyne,
 * sleep tracking,
 * mood and focus monitoring,
 * medication tracking,
 * statistics,
-* data export,
-* input validation.
+* CSV export,
+* validation system.
 
 ---
 
@@ -22,10 +24,16 @@ git clone https://github.com/Judisk/daily-tracker-cli
 cd daily-tracker-cli
 ```
 
-Add a new record:
+Run CLI mode:
 
 ```bash
 go run ./cmd --add
+```
+
+Run GUI mode:
+
+```bash
+go run ./cmd --gui
 ```
 
 Show statistics:
@@ -42,7 +50,21 @@ go run ./cmd --export
 
 ---
 
-# 📝 Example
+# 🖥 GUI
+
+The project includes a desktop GUI built with Fyne.
+
+Current GUI features:
+
+* record creation,
+* real-time validation,
+* CSV export,
+* reusable field system,
+* configurable form architecture.
+
+---
+
+# 📝 CLI Example
 
 ```text
 $ go run ./cmd --add
@@ -109,10 +131,16 @@ data/data.csv
 
 # ⚙️ Available Commands
 
-## Add a record
+## Add a record (CLI)
 
 ```bash
 go run ./cmd --add
+```
+
+## Launch GUI
+
+```bash
+go run ./cmd --gui
 ```
 
 ## Show statistics
@@ -153,19 +181,20 @@ data/data.csv
 
 # ✨ Features
 
-* Interactive CLI input
-* Generic reusable input system
+* CLI application
+* Desktop GUI application
+* Reusable validation system
+* Reusable field configuration system
 * Sleep tracking
 * Sleep duration calculation
 * Mood / energy / focus tracking
 * Medication tracking
-* Notes and side effects logging
 * JSON storage
 * CSV export
-* Average statistics
+* Statistics calculation
 * Last N records filtering
-* Input validation
-* Generic statistics functions
+* Real-time GUI validation
+* Modular package structure
 * Unit tests
 
 ---
@@ -175,30 +204,36 @@ data/data.csv
 This project was built to:
 
 * practice Go,
-* learn CLI application architecture,
+* learn application architecture,
+* learn GUI development in Go,
 * work with JSON and CSV,
-* practice validation and generic functions,
-* experiment with data tracking and analysis.
+* practice validation systems,
+* experiment with reusable abstractions,
+* improve software design skills.
 
 ---
 
 # 🛠 Tech Stack
 
-* Go (standard library)
-* JSON for storage
+* Go
+* Fyne GUI toolkit
+* JSON storage
 * CSV export
+* Go standard library
 
 ---
 
 # 📌 Roadmap
 
-* GUI version
 * Record editing
 * Record deletion
 * Better sleep validation
 * Charts and visual statistics
 * SQLite support
 * Configurable reminders
+* Theme support
+* Better GUI layout
+* Notifications
 
 ---
 
