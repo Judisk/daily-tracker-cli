@@ -32,10 +32,8 @@ func newRecord(r *bufio.Reader, f fields) (model.Record, error) {
 
 	wentToBed, err := getValue(r, f.wentToBed)
 	if err != nil {
-
 		return model.Record{}, fmt.Errorf("get went to bed: %w", err)
 	}
-
 	fellAsleep, err := getValue(r, f.fellAsleep)
 	if err != nil {
 		return model.Record{}, fmt.Errorf("get fell asleep: %w", err)

@@ -22,7 +22,6 @@ func Save(r model.Record) error {
 	}
 
 	return os.WriteFile("data/data.json", data, 0644)
-
 }
 
 func Load() ([]model.Record, error) {
@@ -34,13 +33,13 @@ func Load() ([]model.Record, error) {
 		return nil, err
 	}
 
-	var recodrs []model.Record
+	var records []model.Record
 
-	err = json.Unmarshal(data, &recodrs)
+	err = json.Unmarshal(data, &records)
 	if err != nil {
 		return nil, err
 	}
 
-	return recodrs, nil
+	return records, nil
 
 }

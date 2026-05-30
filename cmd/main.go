@@ -24,35 +24,38 @@ func main() {
 	flag.Parse()
 
 	if *addFlag && *statsFlag || *addFlag && *exportFlag || *statsFlag && *exportFlag || *addFlag && *statsFlag && *exportFlag {
-		fmt.Println("Choose only one: --add or --stats or --export")
-		return
-	}
-
-	if !*addFlag && !*statsFlag && !*exportFlag && !*guiFlag {
-		fmt.Println("Usage:")
-		fmt.Println("  --add    Add new record")
-		fmt.Println("  --stats  Show stats")
-		fmt.Println("  --export Export to CSV")
-		fmt.Println("  --stats --last 7")
-
+		fmt.Println("Choose only one: --add, or --stats, or --export, or --gui")
 		return
 	}
 	switch {
+
 	case *statsFlag:
 		stats.RunStats(*last)
+
 	case *addFlag:
 		if err := cli.Add(reader); err != nil {
 			fmt.Println(err)
 			return
 		}
+
 	case *exportFlag:
 		if err := export.ExportJsonToCsv(); err != nil {
 			fmt.Println(err)
 			return
 		}
+
 	case *guiFlag:
 		gui.RunGui()
 
+	default:
+		fmt.Println("Usage:")
+		fmt.Println("  --add    Add new record")
+		fmt.Println("  --stats  Show stats")
+		fmt.Println("  --export Export to CSV")
+		fmt.Println("  --stats --last 7")
+		fmt.Println("  --gui    Launch GUI")
+
+		return
 	}
 
 }

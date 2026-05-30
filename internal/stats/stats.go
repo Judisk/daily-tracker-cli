@@ -11,7 +11,6 @@ func Avg(records []model.Record, selector func(model.Record) int) float64 {
 	if len(records) == 0 {
 		return 0
 	}
-
 	sum := 0
 	for _, r := range records {
 		sum += selector(r)

@@ -17,8 +17,8 @@ func RunGui() {
 		fields = append(fields, field)
 	}
 
-	button := buildSaveButton(fields)
-	exportButton := buildExportButton()
+	button := buildSaveButton(w, fields)
+	exportButton := buildExportButton(w)
 	form := buildForm(fields)
 	content := container.NewVBox(
 		form,

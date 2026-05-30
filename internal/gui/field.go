@@ -31,3 +31,11 @@ func (f *inputField) content() *fyne.Container {
 	)
 
 }
+
+func clearFields(fields []*inputField) {
+	for _, field := range fields {
+		field.entry.SetText("")
+		field.value = nil
+		field.errorLabel.SetText("")
+	}
+}
