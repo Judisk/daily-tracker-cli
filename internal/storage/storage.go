@@ -22,7 +22,7 @@ func Save(r model.Record) error {
 		return fmt.Errorf("marshal records: %w", err)
 	}
 
-	path, err := dataFilePath()
+	path, err := getDataFilePath()
 	if err != nil {
 		return fmt.Errorf("get data file path: %w", err)
 	}
@@ -31,7 +31,7 @@ func Save(r model.Record) error {
 }
 
 func Load() ([]model.Record, error) {
-	path, err := dataFilePath()
+	path, err := getDataFilePath()
 	if err != nil {
 		return nil, fmt.Errorf("get data file path: %w", err)
 	}

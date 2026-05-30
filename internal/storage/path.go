@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 )
 
+var getDataFilePath = dataFilePath
+
 func dataFilePath() (string, error) {
 	configDir, err := os.UserConfigDir()
 	if err != nil {
