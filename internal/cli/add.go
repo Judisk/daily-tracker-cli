@@ -4,13 +4,13 @@ import (
 	"bufio"
 	"fmt"
 
+	application "github.com/Judisk/daily-tracker-cli/internal/app"
 	"github.com/Judisk/daily-tracker-cli/internal/model"
-	"github.com/Judisk/daily-tracker-cli/internal/storage"
 )
 
-func Add(r *bufio.Reader) error {
-
+func Add(r *bufio.Reader, service *application.Service) error {
 	fields := newFields()
+
 	record, err := newRecord(r, fields)
 	if err != nil {
 		return err
@@ -20,9 +20,8 @@ func Add(r *bufio.Reader) error {
 		fmt.Printf("Warning pills running low (%d left)\n", record.Pills)
 	}
 
-	if err := storage.Save(record); err != nil {
-
-		return fmt.Errorf("Error saving data:%w", err)
+	if err := service.CreateRecord(record); err != nil {
+		return fmt.Errorf("create record: %w", err)
 	}
 	fmt.Println("Saved ✅")
 	return nil

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 
+	application "github.com/Judisk/daily-tracker-cli/internal/app"
 	"github.com/Judisk/daily-tracker-cli/internal/cli"
 	"github.com/Judisk/daily-tracker-cli/internal/export"
 	"github.com/Judisk/daily-tracker-cli/internal/gui"
@@ -22,6 +23,8 @@ func main() {
 	guiFlag := flag.Bool("gui", false, "gui version")
 
 	flag.Parse()
+
+	service := application.NewService()
 
 	if flag.NArg() > 0 {
 		fmt.Printf("Unexpected arguments: %v\n", flag.Args())
@@ -42,7 +45,7 @@ func main() {
 		stats.RunStats(*last)
 
 	case *addFlag:
-		if err := cli.Add(reader); err != nil {
+		if err := cli.Add(reader, service); err != nil {
 			fmt.Println(err)
 			return
 		}
@@ -54,7 +57,7 @@ func main() {
 		}
 
 	case *guiFlag:
-		gui.RunGui()
+		gui.RunGui(service)
 
 	default:
 		fmt.Println("Usage:")

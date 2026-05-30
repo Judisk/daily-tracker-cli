@@ -7,11 +7,9 @@ import (
 	application "github.com/Judisk/daily-tracker-cli/internal/app"
 )
 
-func RunGui() {
+func RunGui(service *application.Service) {
 	a := fyneapp.New()
 	w := a.NewWindow("Health Tracker")
-
-	service := application.NewService()
 
 	fields := []*inputField{}
 	configs := buildConfigs()
