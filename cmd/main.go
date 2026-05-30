@@ -23,10 +23,19 @@ func main() {
 
 	flag.Parse()
 
-	if *addFlag && *statsFlag || *addFlag && *exportFlag || *statsFlag && *exportFlag || *addFlag && *statsFlag && *exportFlag {
-		fmt.Println("Choose only one: --add, or --stats, or --export, or --gui")
+	if flag.NArg() > 0 {
+		fmt.Printf("Unexpected arguments: %v\n", flag.Args())
+		fmt.Println("Use --help to see available flags.")
 		return
 	}
+
+	activeModes := countActiveModes(*addFlag, *statsFlag, *exportFlag, *guiFlag)
+
+	if activeModes > 1 {
+		fmt.Println("Choose only one: --add, --stats, --export, or --gui")
+		return
+	}
+
 	switch {
 
 	case *statsFlag:
@@ -58,4 +67,14 @@ func main() {
 		return
 	}
 
+}
+
+func countActiveModes(modes ...bool) int {
+	count := 0
+	for _, mode := range modes {
+		if mode {
+			count++
+		}
+	}
+	return count
 }
