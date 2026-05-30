@@ -27,7 +27,7 @@ func Save(r model.Record) error {
 		return fmt.Errorf("get data file path: %w", err)
 	}
 
-	return os.WriteFile(path, data, 0644)
+	return writeFileAtomic(path, data, 0644)
 }
 
 func Load() ([]model.Record, error) {
