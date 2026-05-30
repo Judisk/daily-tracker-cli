@@ -4,10 +4,11 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
+	application "github.com/Judisk/daily-tracker-cli/internal/app"
 	"github.com/Judisk/daily-tracker-cli/internal/export"
 )
 
-func buildSaveButton(w fyne.Window, fields []*inputField) *widget.Button {
+func buildSaveButton(w fyne.Window, fields []*inputField, service *application.Service) *widget.Button {
 	return widget.NewButton("Save", func() {
 		valid := true
 		for _, field := range fields {
@@ -20,7 +21,7 @@ func buildSaveButton(w fyne.Window, fields []*inputField) *widget.Button {
 			return
 		}
 
-		if err := saveGui(fields); err != nil {
+		if err := saveGui(fields, service); err != nil {
 			dialog.ShowError(err, w)
 			return
 		}

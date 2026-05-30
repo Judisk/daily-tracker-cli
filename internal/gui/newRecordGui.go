@@ -1,17 +1,19 @@
 package gui
 
 import (
+	"fmt"
 	"time"
 
+	application "github.com/Judisk/daily-tracker-cli/internal/app"
 	"github.com/Judisk/daily-tracker-cli/internal/model"
 	"github.com/Judisk/daily-tracker-cli/internal/sleep"
-	"github.com/Judisk/daily-tracker-cli/internal/storage"
 )
 
-func saveGui(fields []*inputField) error {
-	if err := storage.Save(collectRecord(fields)); err != nil {
-		return err
+func saveGui(fields []*inputField, service *application.Service) error {
+	if err := service.CreateRecord(collectRecord(fields)); err != nil {
+		return fmt.Errorf("create record: %w", err)
 	}
+
 	return nil
 }
 

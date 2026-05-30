@@ -1,13 +1,17 @@
 package gui
 
 import (
-	"fyne.io/fyne/v2/app"
+	fyneapp "fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
+
+	application "github.com/Judisk/daily-tracker-cli/internal/app"
 )
 
 func RunGui() {
-	a := app.New()
+	a := fyneapp.New()
 	w := a.NewWindow("Health Tracker")
+
+	service := application.NewService()
 
 	fields := []*inputField{}
 	configs := buildConfigs()
@@ -17,8 +21,9 @@ func RunGui() {
 		fields = append(fields, field)
 	}
 
-	button := buildSaveButton(w, fields)
+	button := buildSaveButton(w, fields, service)
 	exportButton := buildExportButton(w)
+
 	form := buildForm(fields)
 	content := container.NewVBox(
 		form,
